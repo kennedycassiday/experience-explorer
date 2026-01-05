@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.env
+
+# Python cache
+*.pyo
+*.pyd
+*.pkl
+
+# FastAPI / Uvicorn logs
+*.log
+
+# IDE files
+.DS_Store
+.vscode/
+.idea/
+
+# Local settings
+.env*

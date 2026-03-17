@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Questrial&display=swap');
+
+:root {
+  --cosmic-bg: #0b0d1a;
+  --cosmic-surface: rgba(255, 255, 255, 0.04);
+  --cosmic-surface-hover: rgba(255, 255, 255, 0.07);
+  --cosmic-border: rgba(255, 255, 255, 0.08);
+  --cosmic-border-focus: rgba(168, 148, 255, 0.45);
+  --cosmic-text: #e2dff0;
+  --cosmic-text-muted: #8a86a0;
+  --cosmic-accent: #a894ff;
+  --cosmic-accent-dim: rgba(168, 148, 255, 0.15);
+  --cosmic-warm: #f0c27a;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Questrial', sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background: var(--cosmic-bg);
+  color: var(--cosmic-text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}

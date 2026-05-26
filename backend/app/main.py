@@ -27,7 +27,7 @@ def generate_experience_answer(request: RequestIn):
 
     session = Session(engine)
     # answer_text = generate_answer(request)
-    answer_text = "placeholder answer"
+    answer_text = "This window supports visionary, oceanic unity experiences (Neptune–Sun alignment)"
     if request.email:
         user = User(
             name=request.name,

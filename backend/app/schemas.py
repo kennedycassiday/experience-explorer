@@ -1,10 +1,18 @@
+from pydantic import EmailStr, field_validator
 from sqlmodel import SQLModel
 from datetime import date, time, datetime
 
 class RequestIn(SQLModel):
     # Optional contact info (user may provide now or later)
     name: str | None = None
-    email: str | None = None
+    email: EmailStr | None = None
+
+    @field_validator("email", mode="before")
+    @classmethod
+    def empty_email_to_none(cls, v):
+        if v is None or (isinstance(v, str) and not v.strip()):
+            return None
+        return v
 
     # Birth information
     dob: date
@@ -32,6 +40,7 @@ class EmailOptIn(SQLModel):
     draft_token: str
     name: str | None = None
     email: str
+    # newsletter_opt_in: bool
 
 class SaveResult(SQLModel):
     user_id: int

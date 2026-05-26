@@ -3,6 +3,7 @@ from jwcrypto import jwk, jwe
 from jwcrypto.common import json_encode
 from dotenv import load_dotenv
 import os
+from datetime import datetime, timedelta, timezone
 
 # Store the encryption key (don’t regenerate it each time)
 # Encrypt function, create a token from RequestIn + answer_text
@@ -19,6 +20,7 @@ import os
 #    → Decrypt token to get original RequestIn + answer_text
 #    → Create User + Experience and save
 load_dotenv()
+TOKEN_TTL_HOURS = 24
 
 def get_key():
     key = jwk.JWK.from_json(os.environ["JWE_KEY_CURRENT"])
@@ -27,43 +29,52 @@ def get_key():
 def create_token(request_data, answer_text):
     key = get_key()
 
-    #prep payload
+    # prep payload
+    expires_at = datetime.now(timezone.utc) + timedelta(hours=TOKEN_TTL_HOURS)
+
     payload = {
         "request": request_data,
-        "answer_text": answer_text
+        "answer_text": answer_text,
+        "expires_at": expires_at.isoformat(),  # store as ISO 8601 string
     }
 
-    #convert to JSON
     payload_json = json.dumps(payload)
 
-    #create JWE token
     protected_header = {
-        "alg": "dir",  # Direct encryption with shared key
-        "enc": "A256GCM"  # AES-256-GCM encryption
+        "alg": "dir",
+        "enc": "A256GCM",
     }
 
     token = jwe.JWE(
-        payload_json.encode('utf-8'),
+        payload_json.encode("utf-8"),
         recipient=key,
-        protected=protected_header
+        protected=protected_header,
     )
 
-    # Return the compact serialization (the token string)
     return token.serialize(compact=True)
 
 def decrypt_token(jwetoken):
     key = get_key()
 
     try:
-        #parse the token
         token = jwe.JWE()
         token.deserialize(jwetoken, key=key)
 
-        #decrypt and get payload
-        payload = token.payload.decode('utf-8')
+        payload = token.payload.decode("utf-8")
+        data = json.loads(payload)
 
-        #parse JSON back to dict
-        return json.loads(payload)
+        # Check expiration
+        expires_at_str = data.get("expires_at")
+        if not expires_at_str:
+            raise ValueError("Token missing expires_at")
+
+        expires_at = datetime.fromisoformat(expires_at_str)
+        now = datetime.now(timezone.utc)
+
+        if expires_at < now:
+            raise ValueError("Token has expired")
+
+        return data
 
     except Exception as e:
         raise ValueError(f"Invalid or expired token: {str(e)}")

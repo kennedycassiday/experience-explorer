@@ -6,7 +6,7 @@ client = TestClient(app)
 
 #Test /request without email - should return token, not save
 def test_request_without_email(sample_request_data):
-    response = client.post("/request", json=sample_request_data)
+    response = client.post("/api/request", json=sample_request_data)
 
     assert response.status_code == 200
     data = response.json()
@@ -23,7 +23,7 @@ def test_request_without_email(sample_request_data):
 
 #Test /request with email - should save, no token
 def test_request_with_email(sample_request_with_email):
-    response = client.post("/request", json=sample_request_with_email)
+    response = client.post("/api/request", json=sample_request_with_email)
 
     assert response.status_code == 200
     data = response.json()
@@ -42,7 +42,7 @@ def test_request_invalid_data():
         # Missing birth_time, birth_location, etc.
     }
 
-    response = client.post("/request", json=invalid_data)
+    response = client.post("/api/request", json=invalid_data)
 
     # Should return validation error (422)
     assert response.status_code == 422
@@ -53,7 +53,7 @@ def test_request_with_partial_data(sample_request_data):
     del sample_request_data["substance"]
     del sample_request_data["intention"]
 
-    response = client.post("/request", json=sample_request_data)
+    response = client.post("/api/request", json=sample_request_data)
 
     # Should still work
     assert response.status_code == 200

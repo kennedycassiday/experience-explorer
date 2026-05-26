@@ -8,7 +8,7 @@ client = TestClient(app)
 #Test /save with a valid token from /request
 def test_save_with_valid_token(sample_request_data):
     # First, get a token from /request
-    request_response = client.post("/request", json=sample_request_data)
+    request_response = client.post("/api/request", json=sample_request_data)
     assert request_response.status_code == 200
     token = request_response.json()["draft_token"]
 
@@ -19,7 +19,7 @@ def test_save_with_valid_token(sample_request_data):
         "name": "Test User"
     }
 
-    response = client.post("/save", json=save_data)
+    response = client.post("/api/save", json=save_data)
 
     assert response.status_code == 200
     data = response.json()
@@ -37,7 +37,7 @@ def test_save_invalid_token():
         "email": "test@example.com"
     }
 
-    response = client.post("/save", json=save_data)
+    response = client.post("/api/save", json=save_data)
 
     # Should return 400 Bad Request
     assert response.status_code == 400
@@ -56,7 +56,7 @@ def test_save_missing_email():
         # Missing email
     }
 
-    response = client.post("/save", json=save_data)
+    response = client.post("/api/save", json=save_data)
 
     # Should return validation error (422)
     assert response.status_code == 422

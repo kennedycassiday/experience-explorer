@@ -7,6 +7,7 @@ class RequestIn(SQLModel):
     name: str | None = None
     email: EmailStr | None = None
 
+    #validate email format when provided
     @field_validator("email", mode="before")
     @classmethod
     def empty_email_to_none(cls, v):
